@@ -31,4 +31,8 @@ public class ArticleService {
     public void modify(int id, String title, String body, boolean isBlind) {
         articleRepository.modify(id, title, body, isBlind);
     }
+
+    public void delete(int id) {
+        articleRepository.delete(id);
+    }
 }

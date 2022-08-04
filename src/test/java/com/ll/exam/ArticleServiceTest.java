@@ -135,4 +135,17 @@ public class ArticleServiceTest {
         // long diffSeconds = ChronoUnit.SECONDS.between(articleDto.getModifiedDate(), LocalDateTime.now());
         // assertThat(diffSeconds).isLessThanOrEqualTo(1L);
     }
+
+    @Test
+    @DisplayName("글 삭제 테스트!")
+    public void delete() {
+        ArticleService articleService = Container.getObj(ArticleService.class);
+
+        articleService.delete(1);
+
+        ArticleDto articleDto = articleService.getArticleById(1);
+
+        assertThat(articleDto).isNull();
+
+    }
 }

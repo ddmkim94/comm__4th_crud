@@ -2,14 +2,54 @@ package com.ll.exam;
 
 import com.ll.exam.article.dto.ArticleDto;
 import com.ll.exam.article.service.ArticleService;
+import com.ll.exam.mymap.MyMap;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ArticleServiceTest {
+
+    // 각 테스트마다 실행되는 메서드!!
+    // 데이터를 지우고 다시 새로 만들어주는 역할!
+    // 테스트의 독립성을 부여해주는 역할을 한다.
+    // 📌 테스트는 순서에 의존하도록 작성하면 안된다!!
+    @BeforeEach
+    public void beforeEach() {
+        truncateArticleTable();
+        makeArticleTestDate();
+    }
+
+    private void makeArticleTestDate() {
+        // 테이블에 데이터를 다시 채워줌
+        MyMap myMap = Container.getObj(MyMap.class);
+
+        IntStream.rangeClosed(1, 3).forEach(no -> {
+            boolean isBlind = false;
+            String title = "제목%d".formatted(no);
+            String body = "내용%d".formatted(no);
+
+            myMap.run("""
+                    INSERT INTO article
+                    SET createdDate = NOW(),
+                    modifiedDate = NOW(),
+                    title = ?,
+                    `body` = ?,
+                    isBlind = ?
+                    """, title, body, isBlind);
+        });
+    }
+
+    private void truncateArticleTable() {
+        // 테이블 초기화
+        MyMap myMap = Container.getObj(MyMap.class);
+        myMap.run("TRUNCATE article");
+    }
+
     @Test
     public void articleService가_존재한다() {
         ArticleService articleService = Container.getObj(ArticleService.class);

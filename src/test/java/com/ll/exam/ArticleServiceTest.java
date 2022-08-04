@@ -3,11 +3,8 @@ package com.ll.exam;
 import com.ll.exam.article.dto.ArticleDto;
 import com.ll.exam.article.service.ArticleService;
 import com.ll.exam.mymap.MyMap;
-import com.ll.exam.util.Ut;
 import org.junit.jupiter.api.*;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -16,10 +13,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ArticleServiceTest {
 
+    private final MyMap myMap;
+    private final ArticleService articleService;
+    private static final int TEST_DATE_SIZE = 100; // 테스트 케이스 개수! (찾아서 바꿀 필요가 없어짐!!)
+
+    public ArticleServiceTest() {
+        myMap = Container.getObj(MyMap.class);
+        articleService = Container.getObj(ArticleService.class);
+    }
+
     @BeforeAll
     public void beforeAll() {
-        MyMap myMap = Container.getObj(MyMap.class);
-
         // 모든 DB 처리시에, 처리되는 SQL을 콘솔에 출력
         myMap.setDevMode(true);
     }
@@ -35,10 +39,7 @@ public class ArticleServiceTest {
     }
 
     private void makeArticleTestDate() {
-        // 테이블에 데이터를 다시 채워줌
-        MyMap myMap = Container.getObj(MyMap.class);
-
-        IntStream.rangeClosed(1, 3).forEach(no -> {
+        IntStream.rangeClosed(1, TEST_DATE_SIZE).forEach(no -> {
             boolean isBlind = false;
             String title = "제목%d".formatted(no);
             String body = "내용%d".formatted(no);
@@ -55,29 +56,24 @@ public class ArticleServiceTest {
     }
 
     private void truncateArticleTable() {
-        // 테이블 초기화
-        MyMap myMap = Container.getObj(MyMap.class);
         myMap.run("TRUNCATE article");
     }
 
     @Test
     public void articleService가_존재한다() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
-
         assertThat(articleService).isNotNull();
     }
 
     @Test
+    @DisplayName("전체 게시물 가져오기!")
     public void getArticles() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
-
         List<ArticleDto> articleDtoList = articleService.getArticles();
-        assertThat(articleDtoList.size()).isEqualTo(3);
+        assertThat(articleDtoList.size()).isEqualTo(TEST_DATE_SIZE);
     }
 
     @Test
+    @DisplayName("id로 게시물 가져오기!")
     public void getArticleById() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
         ArticleDto articleDto = articleService.getArticleById(1);
 
         assertThat(articleDto.getId()).isEqualTo(1L);
@@ -91,18 +87,14 @@ public class ArticleServiceTest {
     @Test
     @DisplayName("전체 게시물 개수 테스트!")
     public void getArticlesCount() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
-
         long articlesCount = articleService.getArticlesCount();
 
-        assertThat(articlesCount).isEqualTo(3);
+        assertThat(articlesCount).isEqualTo(TEST_DATE_SIZE);
     }
 
     @Test
     @DisplayName("글 작성 테스트!")
     public void write() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
-
         long newArticleId = articleService.write("제목 new", "내용 new", false);
         ArticleDto articleDto = articleService.getArticleById(newArticleId);
 
@@ -118,8 +110,6 @@ public class ArticleServiceTest {
     @DisplayName("글 수정 테스트!")
     public void modify() {
         // Ut.sleep(5000);
-
-        ArticleService articleService = Container.getObj(ArticleService.class);
 
          articleService.modify(1, "제목 new", "내용 new", true);
         ArticleDto articleDto = articleService.getArticleById(1);
@@ -139,8 +129,6 @@ public class ArticleServiceTest {
     @Test
     @DisplayName("글 삭제 테스트!")
     public void delete() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
-
         articleService.delete(1);
 
         ArticleDto articleDto = articleService.getArticleById(1);

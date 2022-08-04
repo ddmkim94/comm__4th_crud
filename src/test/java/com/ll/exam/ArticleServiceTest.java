@@ -3,16 +3,26 @@ package com.ll.exam;
 import com.ll.exam.article.dto.ArticleDto;
 import com.ll.exam.article.service.ArticleService;
 import com.ll.exam.mymap.MyMap;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.ll.exam.util.Ut;
+import org.junit.jupiter.api.*;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ArticleServiceTest {
+
+    @BeforeAll
+    public void beforeAll() {
+        MyMap myMap = Container.getObj(MyMap.class);
+
+        // 모든 DB 처리시에, 처리되는 SQL을 콘솔에 출력
+        myMap.setDevMode(true);
+    }
 
     // 각 테스트마다 실행되는 메서드!!
     // 데이터를 지우고 다시 새로 만들어주는 역할!
@@ -102,5 +112,27 @@ public class ArticleServiceTest {
         assertThat(articleDto.getCreatedDate()).isNotNull();
         assertThat(articleDto.getModifiedDate()).isNotNull();
         assertThat(articleDto.isBlind()).isFalse();
+    }
+
+    @Test
+    @DisplayName("글 수정 테스트!")
+    public void modify() {
+        // Ut.sleep(5000);
+
+        ArticleService articleService = Container.getObj(ArticleService.class);
+
+         articleService.modify(1, "제목 new", "내용 new", true);
+        ArticleDto articleDto = articleService.getArticleById(1);
+
+        assertThat(articleDto.getId()).isEqualTo(1);
+        assertThat(articleDto.getTitle()).isEqualTo("제목 new");
+        assertThat(articleDto.getBody()).isEqualTo("내용 new");
+        assertThat(articleDto.isBlind()).isTrue();
+
+        // DB에서 받아온 게시물 수정날짜와 자바에서 계산한 현재 날짜를 비교하여(초단위)
+        // 그것이 1초 이하로 차이가 난다면
+        // 수정날짜가 갱신되었다 라고 볼 수 있음
+        // long diffSeconds = ChronoUnit.SECONDS.between(articleDto.getModifiedDate(), LocalDateTime.now());
+        // assertThat(diffSeconds).isLessThanOrEqualTo(1L);
     }
 }

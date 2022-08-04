@@ -47,4 +47,20 @@ public class ArticleServiceTest {
 
         assertThat(articlesCount).isEqualTo(3);
     }
+
+    @Test
+    @DisplayName("글 작성 테스트!")
+    public void write() {
+        ArticleService articleService = Container.getObj(ArticleService.class);
+
+        long newArticleId = articleService.write("제목 new", "내용 new", false);
+        ArticleDto articleDto = articleService.getArticleById(newArticleId);
+
+        assertThat(articleDto.getId()).isEqualTo(newArticleId);
+        assertThat(articleDto.getTitle()).isEqualTo("제목 new");
+        assertThat(articleDto.getBody()).isEqualTo("내용 new");
+        assertThat(articleDto.getCreatedDate()).isNotNull();
+        assertThat(articleDto.getModifiedDate()).isNotNull();
+        assertThat(articleDto.isBlind()).isFalse();
+    }
 }

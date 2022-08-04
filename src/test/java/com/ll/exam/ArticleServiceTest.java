@@ -134,6 +134,30 @@ public class ArticleServiceTest {
         ArticleDto articleDto = articleService.getArticleById(1);
 
         assertThat(articleDto).isNull();
+    }
 
+    @Test
+    @DisplayName("이전글 테스트!")
+    public void prevArticle() {
+        long id = 2;
+        ArticleDto articleDto = articleService.getArticleById(id); // 현재글
+        ArticleDto prevArticleDto = articleService.getArticleById(--id); // 이전글
+
+        assertThat(prevArticleDto.getId()).isEqualTo(1);
+        assertThat(prevArticleDto.getTitle()).isEqualTo("제목1");
+        assertThat(prevArticleDto.getBody()).isEqualTo("내용1");
+
+    }
+
+    @Test
+    @DisplayName("다음글 테스트!")
+    public void nextArticle() {
+        long id = 2;
+        ArticleDto articleDto = articleService.getArticleById(id); // 현재글
+        ArticleDto nextArticleDto = articleService.getArticleById(++id); // 이전글
+
+        assertThat(nextArticleDto.getId()).isEqualTo(3);
+        assertThat(nextArticleDto.getTitle()).isEqualTo("제목3");
+        assertThat(nextArticleDto.getBody()).isEqualTo("내용3");
     }
 }

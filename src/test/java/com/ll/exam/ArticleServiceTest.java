@@ -2,6 +2,7 @@ package com.ll.exam;
 
 import com.ll.exam.article.dto.ArticleDto;
 import com.ll.exam.article.service.ArticleService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -35,5 +36,15 @@ public class ArticleServiceTest {
         assertThat(articleDto.getCreatedDate()).isNotNull();
         assertThat(articleDto.getModifiedDate()).isNotNull();
         assertThat(articleDto.isBlind()).isFalse();
+    }
+
+    @Test
+    @DisplayName("전체 게시물 개수 테스트!")
+    public void getArticlesCount() {
+        ArticleService articleService = Container.getObj(ArticleService.class);
+
+        long articlesCount = articleService.getArticlesCount();
+
+        assertThat(articlesCount).isEqualTo(3);
     }
 }

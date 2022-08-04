@@ -141,12 +141,21 @@ public class ArticleServiceTest {
     public void prevArticle() {
         long id = 2;
         ArticleDto articleDto = articleService.getArticleById(id); // 현재글
-        ArticleDto prevArticleDto = articleService.getArticleById(--id); // 이전글
+        ArticleDto prevArticleDto = articleService.getPrevArticle(articleDto); // 이전글
 
         assertThat(prevArticleDto.getId()).isEqualTo(1);
         assertThat(prevArticleDto.getTitle()).isEqualTo("제목1");
         assertThat(prevArticleDto.getBody()).isEqualTo("내용1");
+    }
 
+    @Test
+    @DisplayName("1번 글의 이전글은 존재하지 않는다!")
+    public void prevArticleFromFirstArticle() {
+        long id = 1;
+        ArticleDto articleDto = articleService.getArticleById(id); // 현재글
+        ArticleDto prevArticleDto = articleService.getPrevArticle(articleDto); // 이전글
+
+        assertThat(prevArticleDto).isNull();
     }
 
     @Test
@@ -154,10 +163,20 @@ public class ArticleServiceTest {
     public void nextArticle() {
         long id = 2;
         ArticleDto articleDto = articleService.getArticleById(id); // 현재글
-        ArticleDto nextArticleDto = articleService.getArticleById(++id); // 이전글
+        ArticleDto nextArticleDto = articleService.getNextArticle(articleDto); // 이전글
 
         assertThat(nextArticleDto.getId()).isEqualTo(3);
         assertThat(nextArticleDto.getTitle()).isEqualTo("제목3");
         assertThat(nextArticleDto.getBody()).isEqualTo("내용3");
+    }
+
+    @Test
+    @DisplayName("마지막 글의 다음글은 존재하지 않는다!")
+    public void nextArticleToLastArticle() {
+        long id = 100;
+        ArticleDto articleDto = articleService.getArticleById(id); // 현재글
+        ArticleDto nextArticleDto = articleService.getNextArticle(articleDto); // 이전글
+
+        assertThat(nextArticleDto).isNull();
     }
 }

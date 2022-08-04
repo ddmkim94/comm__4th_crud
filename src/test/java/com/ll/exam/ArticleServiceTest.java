@@ -40,7 +40,7 @@ public class ArticleServiceTest {
 
     private void makeArticleTestDate() {
         IntStream.rangeClosed(1, TEST_DATE_SIZE).forEach(no -> {
-            boolean isBlind = false;
+            boolean isBlind = no >= 11 && no <= 20;
             String title = "제목%d".formatted(no);
             String body = "내용%d".formatted(no);
 
@@ -139,9 +139,7 @@ public class ArticleServiceTest {
     @Test
     @DisplayName("이전글 테스트!")
     public void prevArticle() {
-        long id = 2;
-        ArticleDto articleDto = articleService.getArticleById(id); // 현재글
-        ArticleDto prevArticleDto = articleService.getPrevArticle(articleDto); // 이전글
+        ArticleDto prevArticleDto = articleService.getPrevArticle(2); // 이전글
 
         assertThat(prevArticleDto.getId()).isEqualTo(1);
         assertThat(prevArticleDto.getTitle()).isEqualTo("제목1");
@@ -151,9 +149,7 @@ public class ArticleServiceTest {
     @Test
     @DisplayName("1번 글의 이전글은 존재하지 않는다!")
     public void prevArticleFromFirstArticle() {
-        long id = 1;
-        ArticleDto articleDto = articleService.getArticleById(id); // 현재글
-        ArticleDto prevArticleDto = articleService.getPrevArticle(articleDto); // 이전글
+        ArticleDto prevArticleDto = articleService.getPrevArticle(1); // 이전글
 
         assertThat(prevArticleDto).isNull();
     }
@@ -161,9 +157,7 @@ public class ArticleServiceTest {
     @Test
     @DisplayName("다음글 테스트!")
     public void nextArticle() {
-        long id = 2;
-        ArticleDto articleDto = articleService.getArticleById(id); // 현재글
-        ArticleDto nextArticleDto = articleService.getNextArticle(articleDto); // 이전글
+        ArticleDto nextArticleDto = articleService.getNextArticle(2); // 다음글
 
         assertThat(nextArticleDto.getId()).isEqualTo(3);
         assertThat(nextArticleDto.getTitle()).isEqualTo("제목3");
@@ -173,10 +167,16 @@ public class ArticleServiceTest {
     @Test
     @DisplayName("마지막 글의 다음글은 존재하지 않는다!")
     public void nextArticleToLastArticle() {
-        long id = 100;
-        ArticleDto articleDto = articleService.getArticleById(id); // 현재글
-        ArticleDto nextArticleDto = articleService.getNextArticle(articleDto); // 이전글
+        ArticleDto nextArticleDto = articleService.getNextArticle(100);
 
         assertThat(nextArticleDto).isNull();
+    }
+
+    @Test
+    @DisplayName("10번 글의 다음 글은 21번 글이다! (11번 ~ 20번글 블라인드 처리!)")
+    public void nextArticleIsBlind() {
+        ArticleDto nextArticleDto = articleService.getNextArticle(10); // 이전글
+
+        assertThat(nextArticleDto.getId()).isEqualTo(21);
     }
 }

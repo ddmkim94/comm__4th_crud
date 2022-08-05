@@ -32,8 +32,12 @@ public class ArticleService {
         return articleRepository.write(title, body, isBlind);
     }
 
-    public void modify(int id, String title, String body, boolean isBlind) {
+    public void modify(long id, String title, String body, boolean isBlind) {
         articleRepository.modify(id, title, body, isBlind);
+    }
+
+    public void modify(long id, String title, String body) {
+        modify(id, title, body, false);
     }
 
     public void delete(long id) {

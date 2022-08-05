@@ -42,6 +42,26 @@
                 </div>
             </c:if>
         </div>
+
+        <h1 class="font-bold text-lg mt-3">
+            <i class="fa-solid fa-rectangle-list"></i> 목록
+        </h1>
+
+        <ul class="mt-5">
+            <c:forEach items="${articles}" var="listItemArticle">
+                <li>
+                    <a href="/usr/article/detail/${listItemArticle.id}" class="flex p-2 group">
+                        <span class="badge badge-primary mr-2">${listItemArticle.id}</span>
+                        <div class="group-hover:underline group-hover:text-[red]">
+                            <c:if test="${listItemArticle.id == article.id}">
+                                <span class="text-[red]">현재글</span> -
+                            </c:if>
+                                ${listItemArticle.title} - ${listItemArticle.createdDate}
+                        </div>
+                    </a>
+                </li>
+            </c:forEach>
+        </ul>
     </div>
 </section>
 

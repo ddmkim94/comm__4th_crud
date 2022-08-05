@@ -69,6 +69,10 @@ public class ArticleController {
         rq.setAttr("prevArticle", prevArticleDto);
         rq.setAttr("nextArticle", nextArticleDto);
 
+        List<ArticleDto> articleDtos = articleService.getArticles();
+
+        rq.setAttr("articles", articleDtos);
+
         rq.setAttr("article", articleDto);
         rq.view("usr/article/detail");
     }

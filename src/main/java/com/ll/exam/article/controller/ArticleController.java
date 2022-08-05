@@ -63,6 +63,12 @@ public class ArticleController {
             return;
         }
 
+        ArticleDto prevArticleDto = articleService.getPrevArticle(articleDto.getId());
+        ArticleDto nextArticleDto = articleService.getNextArticle(articleDto.getId());
+
+        rq.setAttr("prevArticle", prevArticleDto);
+        rq.setAttr("nextArticle", nextArticleDto);
+
         rq.setAttr("article", articleDto);
         rq.view("usr/article/detail");
     }
